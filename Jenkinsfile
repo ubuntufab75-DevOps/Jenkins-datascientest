@@ -1,8 +1,8 @@
 pipeline {
 environment { // Declaration of environment variables
-    DOCKER_ID = "ubuntufab75@gmail.com" // replace this with your docker-id
+    DOCKER_ID = "ubuntufab75" // replace this with your docker-id
     DOCKER_IMAGE = "datascientestapi"
-    DOCKER_TAG = "${BUILD_ID}.0" // we will tag our images with the current build in order to increment the value by 1 with each new build
+    DOCKER_TAG = "v.${BUILD_ID}.0" // we will tag our images with the current build in order to increment the value by 1 with each new build
 }
 agent any // Jenkins will be able to select all available agents
 stages {
@@ -41,14 +41,14 @@ stages {
         stage('Docker Push'){ //we pass the built image to our docker hub account
             environment
             {
-                DOCKER_PASS = credentials("DOCKER_HUB_PASS") // we retrieve  docker password from secret text called docker_hub_pass saved on jenkins
+                DOCKER_PAT = credentials("DOCKER_HUB_PAT") // we retrieve  docker password from secret text called docker_hub_pass saved on jenkins
             }
 
             steps {
 
                 script {
                 sh '''
-                docker login -u $DOCKER_ID -p $DOCKER_PASS
+                docker login -u $DOCKER_ID -p $DOCKER_PAT
                 docker push $DOCKER_ID/$DOCKER_IMAGE:$DOCKER_TAG
                 '''
                 }
