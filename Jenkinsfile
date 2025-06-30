@@ -55,12 +55,11 @@ stages {
             }
 
         }
-
-stage('Deploiement en dev'){
-        environment
-        {
-        KUBECONFIG = credentials("KUBE_CONFIG") // we retrieve  kubeconfig from secret file called config saved on jenkins
-        }
+        stage('Deploiement en dev'){
+            environment
+            {
+                KUBECONFIG = credentials("KUBE_CONFIG") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 script {
                 sh '''
@@ -77,11 +76,11 @@ stage('Deploiement en dev'){
             }
 
         }
-stage('Deploiement en staging'){
-        environment
-        {
-        KUBECONFIG = credentials("KUBE_CONFIG") // we retrieve  kubeconfig from secret file called config saved on jenkins
-        }
+        stage('Deploiement en staging'){
+            environment
+            {
+                KUBECONFIG = credentials("KUBE_CONFIG") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
                 script {
                 sh '''
@@ -98,11 +97,11 @@ stage('Deploiement en staging'){
             }
 
         }
-  stage('Deploiement en prod'){
-        environment
-        {
-        KUBECONFIG = credentials("KUBE_CONFIG") // we retrieve  kubeconfig from secret file called config saved on jenkins
-        }
+        stage('Deploiement en prod'){
+            environment
+            {
+                KUBECONFIG = credentials("KUBE_CONFIG") // we retrieve  kubeconfig from secret file called config saved on jenkins
+            }
             steps {
             // Create an Approval Button with a timeout of 15minutes.
             // this require a manuel validation in order to deploy on production environment
@@ -126,5 +125,15 @@ stage('Deploiement en staging'){
 
         }
 
-}
+    }
+    post { // send email when the job has failed
+        // ..
+        failure {
+            echo "This will run if the job failed"
+            mail to: "fall-lewis.y@datascientest.com",
+                subject: "${env.JOB_NAME} - Build # ${env.BUILD_ID} has failed",
+                body: "For more info on the pipeline failure, check out the console output at ${env.BUILD_URL}"
+        }
+        // ..
+    }
 }
